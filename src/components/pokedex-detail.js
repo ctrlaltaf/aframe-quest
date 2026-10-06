@@ -41,6 +41,8 @@ function child(parent, position) {
 
 // Stats panel for the selected Pokémon. Also fills in the name/type header and
 // drives the `pokemon-model` entity. Listens for `pokedex-select` with { id }.
+// The Send out / Recall all buttons emit `pokemon-send-out` / `pokemon-recall`
+// on the scene for `pokemon-wanderers`.
 AFRAME.registerComponent('pokedex-detail', {
   schema: {
     model: { type: 'selector', default: '#pokemon' },
@@ -72,8 +74,14 @@ AFRAME.registerComponent('pokedex-detail', {
     this.onControl = (evt) => {
       if (evt.detail.value === 'shiny') this.toggleShiny();
       else if (evt.detail.value === 'cry') this.modelComponent()?.playCry();
+      else if (evt.detail.value === 'send' && this.current) {
+        this.el.sceneEl.emit('pokemon-send-out', { pokemon: this.current, shiny: this.shiny });
+      } else if (evt.detail.value === 'recall') this.el.sceneEl.emit('pokemon-recall');
     };
     this.data.controls.addEventListener('ui-press', this.onControl);
+
+    this.onWanderersChanged = (evt) => this.recallBtn.setAttribute('ui-button', 'disabled', evt.detail.count === 0);
+    this.el.sceneEl.addEventListener('pokemon-wanderers-changed', this.onWanderersChanged);
 
     // Browsers keep audio muted until the user interacts with the page.
     this.unlockAudio = () => {
@@ -139,6 +147,12 @@ AFRAME.registerComponent('pokedex-detail', {
     this.shinyBtn.setAttribute('ui-button', { label: 'SHINY: OFF', value: 'shiny', width: 0.25, height: 0.07, wrapCount: 12, color: '#3a4670' });
     const cryBtn = child(controls, '0.14 0 0');
     cryBtn.setAttribute('ui-button', { label: 'CRY', value: 'cry', width: 0.25, height: 0.07, wrapCount: 12, color: '#3a4670' });
+    const sendBtn = child(controls, '-0.14 -0.09 0');
+    sendBtn.setAttribute('ui-button', { label: 'SEND OUT', value: 'send', width: 0.25, height: 0.07, wrapCount: 12, color: '#c0392b' });
+    this.recallBtn = child(controls, '0.14 -0.09 0');
+    this.recallBtn.setAttribute('ui-button', {
+      label: 'RECALL ALL', value: 'recall', width: 0.25, height: 0.07, wrapCount: 12, color: '#3a4670', disabled: true,
+    });
   },
 
   modelComponent() {
@@ -218,6 +232,7 @@ AFRAME.registerComponent('pokedex-detail', {
     this.el.sceneEl.removeEventListener('pokedex-select', this.onSelect);
     this.data.model.removeEventListener('pokemon-model-status', this.onModelStatus);
     this.data.controls.removeEventListener('ui-press', this.onControl);
+    this.el.sceneEl.removeEventListener('pokemon-wanderers-changed', this.onWanderersChanged);
     window.removeEventListener('pointerdown', this.unlockAudio);
     window.removeEventListener('keydown', this.unlockAudio);
     this.el.sceneEl.removeEventListener('enter-vr', this.unlockAudio);

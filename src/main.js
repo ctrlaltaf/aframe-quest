@@ -11,4 +11,6 @@ import './components/ui-button.js';
 import './components/pokedex-keyboard.js';
 import './components/pokedex-search.js';
 import './components/pokemon-model.js';
+import './components/pokemon-wander.js';
+import './components/pokemon-wanderers.js';
 import './components/pokedex-detail.js';

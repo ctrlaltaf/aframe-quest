@@ -63,7 +63,7 @@
         <a-entity pokedex-keyboard position="0 -0.13 0"></a-entity>
       </a-entity>
 
-      <!-- Center: name/types, the 3D Pokémon on a pedestal, and Shiny/Cry buttons -->
+      <!-- Center: name/types, the 3D Pokémon on a pedestal, and Shiny/Cry/Send out/Recall buttons -->
       <a-entity id="pokemon-header" position="0 2.0 -1.7"></a-entity>
       <a-cylinder radius="0.42" height="0.9" position="0 0.45 -1.7" color="#2b3550"></a-cylinder>
       <a-cylinder radius="0.44" height="0.03" position="0 0.9 -1.7" color="#ffcb05"></a-cylinder>
@@ -72,6 +72,9 @@
 
       <!-- Right: height, weight, abilities, description and base stats -->
       <a-entity id="stats-panel" pokedex-detail position="1.2 1.4 -1.35" rotation="0 -38 0"></a-entity>
+
+      <!-- Pokémon you send out walk around you here (y = floor height, found by hit test in AR) -->
+      <a-entity id="wanderers" pokemon-wanderers></a-entity>
     </a-scene>
   </body>
 </html>

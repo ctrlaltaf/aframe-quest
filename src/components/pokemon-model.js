@@ -1,14 +1,31 @@
 /* global AFRAME, THREE */
 import { modelUrl } from '../pokeapi.js';
 
+// Frees the geometries, materials and textures (including skinning bone
+// textures) of a loaded model.
+function disposeObject(root) {
+  if (!root) return;
+  root.traverse((node) => {
+    if (node.geometry) node.geometry.dispose();
+    if (node.skeleton) node.skeleton.dispose();
+    if (!node.material) return;
+    for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
+      for (const value of Object.values(material)) {
+        if (value && value.isTexture) value.dispose();
+      }
+      material.dispose();
+    }
+  });
+}
+
 // Shows one Pokémon as an animated 3D model (from the community Pokémon 3D API),
 // standing on this entity's origin. If no model exists, shows the 2D artwork
 // instead. Also owns the Pokémon's cry as positional sound.
 //
 // Emits `pokemon-model-status` with { status: 'loading' | 'loaded' | 'fallback' }.
 //
-// Kept self-contained so you can spawn several later and make them walk around:
-// see playClip() and the `clips` list.
+// Kept self-contained so several can exist at once: `pokemon-wander` reuses it
+// for the Pokémon that walk around the room (see playClip() and hasClip()).
 AFRAME.registerComponent('pokemon-model', {
   schema: {
     id: { type: 'int', default: 0 },
@@ -82,11 +99,18 @@ AFRAME.registerComponent('pokemon-model', {
   },
 
   clearModel() {
-    if (this.mixer) this.mixer.stopAllAction();
+    if (this.mixer) {
+      this.mixer.stopAllAction();
+      this.mixer.uncacheRoot(this.mixer.getRoot());
+    }
     this.mixer = null;
     this.clips = [];
     this.currentAction = null;
-    if (this.modelEl) this.modelEl.remove();
+    if (this.modelEl) {
+      // gltf-model only detaches the model on removal, so free its GPU memory here.
+      disposeObject(this.modelEl.getObject3D('mesh'));
+      this.modelEl.remove();
+    }
     this.modelEl = null;
     this.fallbackEl.setAttribute('visible', false);
   },
@@ -126,6 +150,11 @@ AFRAME.registerComponent('pokemon-model', {
       this.fallbackEl.setAttribute('visible', true);
     }
     this.el.emit('pokemon-model-status', { status: 'fallback' });
+  },
+
+  // True if the model has a clip whose name matches `pattern`.
+  hasClip(pattern) {
+    return this.clips.some((c) => pattern.test(c.name));
   },
 
   // Plays the first clip whose name matches `pattern` (or the first clip).
