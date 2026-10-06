@@ -14,3 +14,4 @@ import './components/pokemon-model.js';
 import './components/pokemon-wander.js';
 import './components/pokemon-wanderers.js';
 import './components/pokedex-detail.js';
+import './components/pokedex-environment.js';

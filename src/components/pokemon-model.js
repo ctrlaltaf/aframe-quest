@@ -1,22 +1,6 @@
 /* global AFRAME, THREE */
 import { modelUrl } from '../pokeapi.js';
-
-// Frees the geometries, materials and textures (including skinning bone
-// textures) of a loaded model.
-function disposeObject(root) {
-  if (!root) return;
-  root.traverse((node) => {
-    if (node.geometry) node.geometry.dispose();
-    if (node.skeleton) node.skeleton.dispose();
-    if (!node.material) return;
-    for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
-      for (const value of Object.values(material)) {
-        if (value && value.isTexture) value.dispose();
-      }
-      material.dispose();
-    }
-  });
-}
+import { disposeObject } from '../dispose.js';
 
 // Shows one Pokémon as an animated 3D model (from the community Pokémon 3D API),
 // standing on this entity's origin. If no model exists, shows the 2D artwork

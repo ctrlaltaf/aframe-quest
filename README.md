@@ -7,8 +7,9 @@ A starter [A-Frame](https://aframe.io) 1.8 project for the Meta Quest 3. It supp
 - **Search panel (left).** Type with the on-screen keyboard (laser + trigger) or your computer keyboard. Search by name (`char`) or number (`25`). Pick from the results and page through them with Prev/Next. **Random** picks any Pokémon. Backspace deletes and Escape clears.
 - **The Pokémon (center).** An animated 3D model on a slowly turning pedestal, with its name, number and types. **Shiny** swaps to the shiny model. **Cry** (or clicking the Pokémon) plays its cry as positional sound. If a Pokémon has no 3D model, its official artwork is shown instead.
 - **Send out / Recall all.** **Send out** puts the current Pokémon on the floor, where it wanders around you. It walks to random spots, keeps clear of the panels, idles, and sometimes cries. Up to 4 can be out at once (the oldest goes back first). **Recall all** removes them. Click a wandering Pokémon to hear its cry.
+- **Scene (background).** The **Scene** button under the Pokémon cycles through Pokémon-themed backgrounds: Classic, Route 1, Viridian Forest, Mt. Moon, Lavender Town and Battle Stadium. Each one has its own sky, floor, fog, lighting and scenery. Your choice is remembered next time.
 - **Stats panel (right).** Height, weight, abilities, the Pokédex description and the six base stats as bars.
-- AR (passthrough) hides the sky and floor so the Pokédex appears in your room. Wandering Pokémon use a hit test to find your real floor, or stay at the headset's floor level (y = 0) if none is found.
+- AR (passthrough) hides the background scene (and turns off its fog and coloured lighting) so the Pokédex appears in your room. Wandering Pokémon use a hit test to find your real floor, or stay at the headset's floor level (y = 0) if none is found.
 
 Data comes live from [PokéAPI](https://pokeapi.co). 3D models come from the fan-made [Pokémon 3D API](https://github.com/Pokemon-3D-api/assets). The models are Nintendo / Game Freak / The Pokémon Company property, used here for a non-commercial class demo.
 
@@ -19,6 +20,8 @@ Code:
 - `src/components/pokemon-wander.js` — makes a `pokemon-model` walk around: pick a point in the area, turn, walk (walk/run clip if the model has one), idle, maybe cry, repeat. The area (radius, the box kept clear for the panels, personal space), speeds and a `headingOffset` are all in its schema.
 - `src/components/pokemon-wanderers.js` — the `#wanderers` container: spawns and recalls wandering Pokémon, caps how many are out, and finds the real floor height in AR.
 - `src/components/pokedex-detail.js` — name/types header, stats panel, and the Shiny/Cry/Send out/Recall all buttons.
+- `src/components/pokedex-environment.js` — the background scenes. Each scene is a small data entry (sky colours, floor, fog, lights) plus a `build()` that adds scenery made from simple shapes. Add your own by copying one. Scenery is drawn with `InstancedMesh`, so a forest of 150 trees costs only a few draw calls.
+- `src/dispose.js` — frees a three.js object's GPU memory (used when models and scenes are replaced).
 - `src/components/ui-button.js` — the clickable button used everywhere.
 - The template's original example components (`spin`, `hover-highlight`, `click-recolor`, `xr-mode-label`) are still in `src/components/`.
 
