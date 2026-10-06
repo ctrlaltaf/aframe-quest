@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A-Frame Quest Template</title>
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <!--
+      xr-mode-ui XRMode: xr  -> shows both "VR" and "AR" buttons (AR = Quest 3 passthrough)
+      webxr                  -> asks the headset for hand tracking + hit testing when available
+      cursor/raycaster       -> lets you click .interactive things with the mouse on desktop
+    -->
+    <a-scene
+      xr-mode-ui="XRMode: xr"
+      webxr="optionalFeatures: hand-tracking, hit-test"
+      ar-hit-test="enabled: false"
+      renderer="colorManagement: true; antialias: true"
+      cursor="rayOrigin: mouse"
+      raycaster="objects: .interactive"
+    >
+      <a-assets>
+        <!-- Put models, textures and sounds in public/assets and reference them with a
+             relative path (no leading slash, so it also works on GitHub Pages), e.g.
+             <a-asset-item id="robot" src="assets/robot.glb"></a-asset-item> -->
+      </a-assets>
+
+      <!-- Player rig: move the rig (not the camera) to teleport/relocate the player -->
+      <a-entity id="rig">
+        <a-entity id="head" camera look-controls wasd-controls position="0 1.6 0"></a-entity>
+
+        <!-- Quest Touch controllers: laser pointer, trigger = click -->
+        <a-entity id="leftController" laser-controls="hand: left" raycaster="objects: .interactive; far: 10"></a-entity>
+        <a-entity id="rightController" laser-controls="hand: right" raycaster="objects: .interactive; far: 10"></a-entity>
+
+        <!-- Hand tracking (put the controllers down): pinch to grab .grabbable objects -->
+        <a-entity id="leftHand" hand-tracking-grab-controls="hand: left"></a-entity>
+        <a-entity id="rightHand" hand-tracking-grab-controls="hand: right"></a-entity>
+      </a-entity>
+
+      <!-- Lighting -->
+      <a-entity light="type: ambient; intensity: 0.6"></a-entity>
+      <a-entity light="type: directional; intensity: 1.2" position="1 3 2"></a-entity>
+
+      <!-- Environment: hidden automatically in AR so you see your real room -->
+      <a-sky color="#1d2433" hide-on-enter-ar></a-sky>
+      <a-plane rotation="-90 0 0" width="20" height="20" color="#3a4256" hide-on-enter-ar></a-plane>
+
+      <!-- Status text: shows desktop / VR / AR -->
+      <a-entity
+        xr-mode-label
+        position="0 2.1 -1.5"
+        text="value: Desktop mode; align: center; width: 2; color: #ffffff"
+      ></a-entity>
+
+      <!-- Demo objects (placed roughly at table height in front of you) -->
+      <a-box
+        class="interactive"
+        hover-highlight
+        click-recolor
+        position="-0.5 1.2 -1"
+        width="0.25" height="0.25" depth="0.25"
+        color="#4cc3d9"
+      ></a-box>
+
+      <a-sphere
+        class="interactive"
+        hover-highlight
+        click-recolor
+        spin="speed: 45"
+        position="0 1.2 -1"
+        radius="0.14"
+        color="#ef2d5e"
+      ></a-sphere>
+
+      <!-- Pinch-grab this one with tracked hands -->
+      <a-box
+        grabbable
+        position="0.5 1.2 -1"
+        width="0.15" height="0.15" depth="0.15"
+        color="#ffc65d"
+      ></a-box>
+      <a-entity
+        position="0.5 1.4 -1"
+        text="value: grab me\n(hand tracking); align: center; width: 0.8; color: #ffffff"
+      ></a-entity>
+    </a-scene>
+  </body>
+</html>
