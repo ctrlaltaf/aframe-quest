@@ -2,16 +2,22 @@
 
 A starter [A-Frame](https://aframe.io) 1.8 project for the Meta Quest 3. It supports VR, AR/passthrough (mixed reality), Touch controllers and hand tracking. It uses [Vite](https://vite.dev) for hot reload and builds.
 
-## What's in the scene
+## What's in the scene: a Pokédex
 
-- **VR and AR buttons.** AR uses the Quest 3 passthrough cameras, and the sky and floor hide automatically so you see your room.
-- **Touch controllers.** Each controller has a laser pointer, and the trigger clicks.
-- **Hand tracking.** Put the controllers down and pinch to grab the yellow cube.
-- **Example components** in `src/components/`:
-  - `spin`: rotates an object.
-  - `hover-highlight`: scales an object up while you point at it.
-  - `click-recolor`: gives an object a random color when you click it.
-  - `xr-mode-label`: shows whether you're on desktop, in VR or in AR.
+- **Search panel (left).** Type with the on-screen keyboard (laser + trigger) or your computer keyboard. Search by name (`char`) or number (`25`). Pick from the results and page through them with Prev/Next. **Random** picks any Pokémon. Backspace deletes and Escape clears.
+- **The Pokémon (center).** An animated 3D model on a slowly turning pedestal, with its name, number and types. **Shiny** swaps to the shiny model. **Cry** (or clicking the Pokémon) plays its cry as positional sound. If a Pokémon has no 3D model, its official artwork is shown instead.
+- **Stats panel (right).** Height, weight, abilities, the Pokédex description and the six base stats as bars.
+- AR (passthrough) hides the sky and floor so the Pokédex appears in your room.
+
+Data comes live from [PokéAPI](https://pokeapi.co). 3D models come from the fan-made [Pokémon 3D API](https://github.com/Pokemon-3D-api/assets). The models are Nintendo / Game Freak / The Pokémon Company property, used here for a non-commercial class demo.
+
+Code:
+- `src/pokeapi.js` — fetches and caches Pokémon data and builds model URLs.
+- `src/components/pokedex-search.js`, `pokedex-keyboard.js` — the search panel.
+- `src/components/pokemon-model.js` — model loading, size normalizing, animation (`playClip`) and cry (`playCry`). Kept self-contained so you can spawn several Pokémon and make them walk around later.
+- `src/components/pokedex-detail.js` — name/types header, stats panel, and the Shiny/Cry buttons.
+- `src/components/ui-button.js` — the clickable button used everywhere.
+- The template's original example components (`spin`, `hover-highlight`, `click-recolor`, `xr-mode-label`) are still in `src/components/`.
 
 ## Setup
 
@@ -24,7 +30,7 @@ npm run dev
 
 Vite prints a `Local` and a `Network` URL, both `https://`. The dev server uses a self-signed certificate, so your browser will show a warning the first time. Click **Advanced → Proceed**.
 
-On desktop you can click things with the mouse and move with WASD. To test XR without a headset, install Meta's [Immersive Web Emulator](https://chromewebstore.google.com/detail/immersive-web-emulator/cgffilbpcibhmcfbgggfhfolhkfbhmik) Chrome extension.
+On desktop you can click things with the mouse and drag to look around (WASD movement is off because the keyboard types searches). To test XR without a headset, install Meta's [Immersive Web Emulator](https://chromewebstore.google.com/detail/immersive-web-emulator/cgffilbpcibhmcfbgggfhfolhkfbhmik) Chrome extension.
 
 ## Testing on the Quest 3 during development
 

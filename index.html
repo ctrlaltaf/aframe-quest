@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>A-Frame Quest Template</title>
+    <title>Pokédex VR</title>
+    <link rel="icon" href="data:," />
     <script type="module" src="/src/main.js"></script>
   </head>
   <body>
@@ -28,7 +29,8 @@
 
       <!-- Player rig: move the rig (not the camera) to teleport/relocate the player -->
       <a-entity id="rig">
-        <a-entity id="head" camera look-controls wasd-controls position="0 1.6 0"></a-entity>
+        <!-- No wasd-controls: the keyboard is used for typing searches -->
+        <a-entity id="head" camera look-controls position="0 1.6 0"></a-entity>
 
         <!-- Quest Touch controllers: laser pointer, trigger = click -->
         <a-entity id="leftController" laser-controls="hand: left" raycaster="objects: .interactive; far: 10"></a-entity>
@@ -50,41 +52,26 @@
       <!-- Status text: shows desktop / VR / AR -->
       <a-entity
         xr-mode-label
-        position="0 2.1 -1.5"
+        position="0 2.4 -1.7"
         text="value: Desktop mode; align: center; width: 2; color: #ffffff"
       ></a-entity>
 
-      <!-- Demo objects (placed roughly at table height in front of you) -->
-      <a-box
-        class="interactive"
-        hover-highlight
-        click-recolor
-        position="-0.5 1.2 -1"
-        width="0.25" height="0.25" depth="0.25"
-        color="#4cc3d9"
-      ></a-box>
+      <!-- ===== Pokédex ===== -->
 
-      <a-sphere
-        class="interactive"
-        hover-highlight
-        click-recolor
-        spin="speed: 45"
-        position="0 1.2 -1"
-        radius="0.14"
-        color="#ef2d5e"
-      ></a-sphere>
+      <!-- Left: search box, results and on-screen keyboard -->
+      <a-entity id="search-panel" pokedex-search position="-1.2 1.4 -1.35" rotation="0 38 0">
+        <a-entity pokedex-keyboard position="0 -0.13 0"></a-entity>
+      </a-entity>
 
-      <!-- Pinch-grab this one with tracked hands -->
-      <a-box
-        grabbable
-        position="0.5 1.2 -1"
-        width="0.15" height="0.15" depth="0.15"
-        color="#ffc65d"
-      ></a-box>
-      <a-entity
-        position="0.5 1.4 -1"
-        text="value: grab me\n(hand tracking); align: center; width: 0.8; color: #ffffff"
-      ></a-entity>
+      <!-- Center: name/types, the 3D Pokémon on a pedestal, and Shiny/Cry buttons -->
+      <a-entity id="pokemon-header" position="0 2.0 -1.7"></a-entity>
+      <a-cylinder radius="0.42" height="0.9" position="0 0.45 -1.7" color="#2b3550"></a-cylinder>
+      <a-cylinder radius="0.44" height="0.03" position="0 0.9 -1.7" color="#ffcb05"></a-cylinder>
+      <a-entity id="pokemon" pokemon-model="size: 0.75" position="0 0.915 -1.7"></a-entity>
+      <a-entity id="pokemon-controls" position="0 0.8 -1.22" rotation="-35 0 0"></a-entity>
+
+      <!-- Right: height, weight, abilities, description and base stats -->
+      <a-entity id="stats-panel" pokedex-detail position="1.2 1.4 -1.35" rotation="0 -38 0"></a-entity>
     </a-scene>
   </body>
 </html>
